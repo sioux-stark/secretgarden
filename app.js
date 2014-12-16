@@ -80,7 +80,7 @@ app.post("/users", function (req, res) {
       req.login(user, function(){
         // after login redirect show page
         console.log("Id: ", user.id)
-        res.redirect('upload/' + user.id);
+        res.redirect('/upload/' + user.id);
       });
     })
 });
@@ -104,9 +104,30 @@ app.get('/garden', function (req,res){
 app.get('/gardenpictures',function (req,res){
   res.render('users/gardenUpload')
 });
-app.get('upload/:id', function (req, res) {
+
+app.get('/upload/:id', function (req, res) {
  res.render('users/gardenUpload');
 });
+
+app.post("/upload/:id", function (req, res){
+  var addZip = req.body.user;
+   db.user.create(addZip).success(function(createdZip){
+    res.redirect('/upload/' + createdZip.id);
+  });
+});  
+
+// When someone wants the login page
+app.get("/login", function (req, res) {
+  res.render("users/login");
+});
+
+// Authenticating a user
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login'
+}));
+
+
 app.post('upload/:id', function (req, res) {
   var userId = req.params.id;
   var zipcode = req.body.user[zipcode];
