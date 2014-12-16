@@ -1,6 +1,6 @@
 var express = require("express"),
   bodyParser = require("body-parser"),
-  //db = require("./models"),
+  db = require("./models"),
   passport = require("passport"),
   session = require("cookie-session"),
   app = express();
@@ -45,7 +45,7 @@ Taking a string and turns into an object
 */
 passport.deserializeUser(function(id, done){
   console.log("DESERIALIZED JUST RAN!");
-  db.secret.find({
+  db.user.find({
       where: {
         id: id
       }
@@ -64,12 +64,12 @@ app.get("/sign_up", function (req, res) {
 });
 
 // WHEN SOMEONE  SUBMITS A SIGNUP PAGE
-app.post("/show", function (req, res) {
-  console.log("POST /show.ejs");
+app.post("/users", function (req, res) {
+  
   var newUser = req.body.user;
   console.log("New User:", newUser);
   // CREATE a user and secure their password
-  db.secret.createSecure(newUser.email, newUser.password, 
+  db.user.createSecure(newUser.email, newUser.password, 
     function () {
       // if a user fails to create make them signup again
       res.redirect("/sign_up");
@@ -80,7 +80,7 @@ app.post("/show", function (req, res) {
       req.login(user, function(){
         // after login redirect show page
         console.log("Id: ", user.id)
-        res.redirect('/show' + user.id);
+        res.redirect('upload/' + user.id);
       });
     })
 });
@@ -99,6 +99,27 @@ app.get('/gardens', function (req,res){
 //user garden
 app.get('/garden', function (req,res){
   res.render('site/garden.ejs');
+});
+
+app.get('/gardenpictures',function (req,res){
+  res.render('users/gardenUpload')
+});
+app.get('upload/:id', function (req, res) {
+ res.render('users/gardenUpload');
+});
+app.post('upload/:id', function (req, res) {
+  var userId = req.params.id;
+  var zipcode = req.body.user[zipcode];
+  // add a zipcode to their row in the usertable
+  db.user
+    .find(userId)
+    .success( function (foundUser) {
+      user.save().success(function(){zipcode});
+      res.render('site/index'); 
+    })
+    .catch ( function (err) {
+      console.log(err);
+    });
 });
 
 app.listen(3000, function () {
