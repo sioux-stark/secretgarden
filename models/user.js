@@ -26,6 +26,7 @@ var bcrypt        = require('bcrypt'),
 
 module.exports = function(sequelize, DataTypes) {
   var user = sequelize.define("user", {
+    name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     zipcode: DataTypes.STRING(5)
@@ -56,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
       createSecure: function (email, password, error, success) {
         var hash = this.encryptPassword (password);
         this.create({
-                     email           : email,
+                     email: email,
                      password: hash
             })
             .then(
@@ -72,33 +73,33 @@ module.exports = function(sequelize, DataTypes) {
               }
             );
       },
-      authenticate: function (email, password, done) { 
-        this.findByEmail (email)
-            .then( function (user) {
-                   if (user.checkPassword (password) ){
-                          done (null, user);
-                   } else {
-                          done (null, false, { message : "Unable to Authenticate" });
-                          }
-            },
-            function (err) {
-                done (err)
-            })  
-      }
+  authenticate: function (email, password, done) { 
+  this.findByEmail (email)
+    .then( function (user) {
+           if (user.checkPassword (password) ){
+                  done (null, user);
+           } else {
+                  done (null, false, { message : "Unable to Authenticate" });
+                  }
+    },
+    function (err) {
+        done (err)
+    })  
+    }
     }//ends class methods
   });//closes User definition in sequelize, 
     //below are authentication settings used in the model's methods
 
   passport.use (
     new passportLocal.Strategy ({
-                                 usernameField     : 'user[email]',
-                                 passwordField     : 'user[password]',
-                                 passReqToCallback : true
-                                },
-                                function (req, email, password, done){
-                                  console.log ("Authenticating");
-                                  user.authenticate (email, password, done);
-                                }
+     usernameField     : 'user[email]',
+     passwordField     : 'user[password]',
+     passReqToCallback : true
+    },
+    function (req, email, password, done){
+      console.log ("Authenticating");
+      user.authenticate (email, password, done);
+    }
     )
   )
 
