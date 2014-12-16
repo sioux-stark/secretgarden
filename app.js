@@ -80,7 +80,7 @@ app.post("/users", function (req, res) {
       req.login(user, function(){
         // after login redirect show page
         console.log("Id: ", user.id)
-        res.redirect('/upload/' + user.id);
+        res.redirect('/users/' + user.id);
       });
     })
 });
@@ -105,14 +105,18 @@ app.get('/gardenpictures',function (req,res){
   res.render('users/gardenUpload')
 });
 
-app.get('/upload/:id', function (req, res) {
- res.render('users/gardenUpload');
+app.get('/users/:id', function (req, res) {
+ res.render('users/gardenUpload', {userId: req.params.id});
 });
-
-app.post("/upload/:id", function (req, res){
-  var addZip = req.body.user;
-   db.user.create(addZip).success(function(createdZip){
-    res.redirect('/upload/' + createdZip.id);
+//save zipcode to database
+app.post("/users/:id", function (req, res){
+  var addZip = req.body.user.zipcode;
+  console.log("ADDZIP", addZip)
+   db.user.find(req.params.id).success(function(user){
+    user.updateAttributes({zipcode: addZip}).then(function(user){
+      console.log(user)
+      res.redirect('/users/' + user.id);
+    })
   });
 });  
 
@@ -128,20 +132,20 @@ app.post('/login', passport.authenticate('local', {
 }));
 
 
-app.post('upload/:id', function (req, res) {
-  var userId = req.params.id;
-  var zipcode = req.body.user[zipcode];
-  // add a zipcode to their row in the usertable
-  db.user
-    .find(userId)
-    .success( function (foundUser) {
-      user.save().success(function(){zipcode});
-      res.render('site/index'); 
-    })
-    .catch ( function (err) {
-      console.log(err);
-    });
-});
+// app.post('users/:id', function (req, res) {
+//   var userId = req.params.id;
+//   var zipcode = req.body.user['zipcode'];
+//   // add a zipcode to their row in the usertable
+//   db.user
+//     .find(userId)
+//     .success( function (foundUser) {
+//       user.save().success(function(){zipcode});
+//       res.render('site/index'); 
+//     })
+//     .catch ( function (err) {
+//       console.log(err);
+//     });
+// });
 
 app.listen(3000, function () {
   console.log("LISTENING");
