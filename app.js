@@ -189,17 +189,7 @@ app.post('/fileupload', function(req, res){
 
  
 
-//save picture to database
-app.post("/users/:id", function (req, res){
-  var addPicture = req.body.gardens.url;
-  console.log("addPicture", addPicture)
-   db.user.find(req.params.id).success(function(user){
-    user.updateAttributes({url: addZip}).then(function(gardens){
-      console.log(user)
-      res.redirect('/users/' + user.id);
-    })
-  });
-});  
+ 
 
 
 app.listen(3000, function () {
