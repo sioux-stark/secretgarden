@@ -167,12 +167,24 @@ app.post('/login', passport.authenticate('local', {
 var multer = require('multer');
 var done = false;
 
-app.use(multer({ dest: __dirname + '/photos/',
+app.use(function(req, res, next) {
+    console.log("RUNNING MULTER")
+    var contentType = req.get("content-type");
+    if (contentType && contentType.match(/^multipart\/form\-data\;/) && req.user) {
+      next();
+    } else {
+      res.redirect("/login");
+    }
+});
+app.use(
+  multer({ dest: __dirname + '/photos/',
     rename: function(fieldname, filename) {
       return filename + Date.now();
     },
     onFileUploadStart: function (file) {
-      console.log(file.originalname + ' is starting');
+      console.log(file.originalname + ' ATTEMPTED');
+      console.log("CHECKING FOR CURRENT USER");
+      console.log(file)
     },
     onFileUploadComplete: function (file) {
       console.log(file.fieldname + ' uploaded to ' + file.path);
@@ -181,11 +193,16 @@ app.use(multer({ dest: __dirname + '/photos/',
 }));
 
 app.post('/fileupload', function(req, res){
-  if (done === true) {
-    console.log( req.files);
-    res.send('file uploaded');
-  }
+    console.log(req.files);
+    db.garden.create({
+      title: req.files.userPhoto.name,
+      userId: req.user.id
+    }).then(function (garden) {
+      res.redirect("/")
+    });
 });
+
+
 
  
 
