@@ -4,9 +4,12 @@ var express = require("express"),
   passport = require("passport"),
   session = require("cookie-session"),
   app = express();
+  aws = require('aws-sdk'),
+  
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
 
 
 /*
@@ -15,6 +18,7 @@ app.use(bodyParser.urlencoded({extended: true}));
     and records relevant info about users
     who are signed in
 */
+
 app.use(session( {
   secret: 'thisismysecretkey',
   name: 'chocolate chip',
@@ -37,6 +41,7 @@ passport.serializeUser(function(user, done){
 
   done(null, user.id);
 });
+
 
 /*
 DeSERIALizing
@@ -65,7 +70,6 @@ app.get("/sign_up", function (req, res) {
 
 // WHEN SOMEONE  SUBMITS A SIGNUP PAGE
 app.post("/users", function (req, res) {
-  
   var newUser = req.body.user;
   console.log("New User:", newUser);
   // CREATE a user and secure their password
@@ -84,18 +88,22 @@ app.post("/users", function (req, res) {
       });
     })
 });
+
 //homepage search areacode for gardens
 app.get('/', function (req,res) {
   res.render('site/index.ejs');
 });
+
 //about page
 app.get('/about', function (req,res) {
   res.render('site/about.ejs');
 });
+
 //gardens in the area
 app.get('/gardens', function (req,res){
   res.render('site/gardens.ejs');
 });
+
 //user garden
 app.get('/garden', function (req,res){
   res.render('site/garden.ejs');
@@ -105,9 +113,11 @@ app.get('/gardenpictures',function (req,res){
   res.render('users/gardenUpload')
 });
 
+//this is where user uploads and adds areacode
 app.get('/users/:id', function (req, res) {
  res.render('users/gardenUpload', {userId: req.params.id});
 });
+
 //save zipcode to database
 app.post("/users/:id", function (req, res){
   var addZip = req.body.user.zipcode;
@@ -125,9 +135,14 @@ app.get("/login", function (req, res) {
   res.render("users/login");
 });
 
+// Temporary redirect to users profile
+app.get('/temp', function (req, res) {
+  res.redirect('/users/' + req.user.id);
+});
+
 // Authenticating a user
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
+  successRedirect: '/temp',
   failureRedirect: '/login'
 }));
 
@@ -146,6 +161,46 @@ app.post('/login', passport.authenticate('local', {
 //       console.log(err);
 //     });
 // });
+
+
+/// TESTING FILE UPLOAD
+var multer = require('multer');
+var done = false;
+
+app.use(multer({ dest: __dirname + '/photos/',
+    rename: function(fieldname, filename) {
+      return filename + Date.now();
+    },
+    onFileUploadStart: function (file) {
+      console.log(file.originalname + ' is starting');
+    },
+    onFileUploadComplete: function (file) {
+      console.log(file.fieldname + ' uploaded to ' + file.path);
+      done = true;
+    }
+}));
+
+app.post('/fileupload', function(req, res){
+  if (done === true) {
+    console.log( req.files);
+    res.send('file uploaded');
+  }
+});
+
+ 
+
+//save picture to database
+app.post("/users/:id", function (req, res){
+  var addPicture = req.body.gardens.url;
+  console.log("addPicture", addPicture)
+   db.user.find(req.params.id).success(function(user){
+    user.updateAttributes({url: addZip}).then(function(gardens){
+      console.log(user)
+      res.redirect('/users/' + user.id);
+    })
+  });
+});  
+
 
 app.listen(3000, function () {
   console.log("LISTENING");
