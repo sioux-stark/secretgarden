@@ -1,0 +1,56 @@
+<html>
+<head> 
+<script>
+</script>
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css"> 
+</head>
+<body>
+<form method="post" action="/users/<%= userId %>">
+  <div>
+    <input type="text" name="user[zipcode]" placeholder="zipcode">
+  </div>
+  
+  <button>Save </button>
+</form>
+
+<form method="post" action="/fileupload" id='uploadForm' enctype='multipart/form-data'>
+  <div>
+    <input type="file" name="userPhoto" />
+    <input type="submit" name="submit" value="upload image" />
+  </div>
+</form>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+     
+ 
