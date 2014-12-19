@@ -1,22 +1,24 @@
 <!--views/users/sign_up.ejs-->
-<!DOCTYPE html>
+<%include ../layouts/header.ejs %> 
 
+<!DOCTYPE html>
 <html>
   <head>
+    <link href="/stylesheets/signup.css" rel="stylesheet" type="text/css"> 
+
   </head>
   <body>
-    sign up
-    <form method="post" action="/users">
-       <div>
-        <input type="text" name="user[name]" placeholder="name">
-      </div>
+     <div class="row">
+    <div class="col-xs-8 col-xs-offset-4 col-sm-6 col-sm-offset-4">
       <div>
         <input type="pass" name="user[email]" placeholder="Email">
       </div>
       <div>
         <input type="password" name="user[password]" placeholder="Password">
       </div>
-      <button>Save </button>
+      <div class="form-group">
+      <input type="submit" value="Sign-Up" class="btn btn-Warning btn-sm btn-cust">
+      </div>
     </form>
   </body>
 </html>

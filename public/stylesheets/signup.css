@@ -1,0 +1,16 @@
+body{
+  background:url(../images/IMG_2550.jpg) no-repeat center center fixed;
+  background-size: cover;
+  height:100%;
+  width:100%;
+
+}
+
+.row{
+  margin-top:50px;
+}
+
+.form-group{
+  margin-top: 10px;
+  
+}
