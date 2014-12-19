@@ -3,25 +3,42 @@
 <head> 
 <script>
 </script>
-  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css"> 
+   <link href="/stylesheets/gardenUpload.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<div id="container">
+<div id="pageContainer" class="pageContainer">  
+<div class="row">
+    <div class="col-xs-8 col-xs-offset-4 col-sm-6 col-sm-offset-4">  
+
+<div class="infoZip">
+  <p> where's your garden?<br> 
+<div>    
+<div class="zipcodeField">    
+
 <form method="post" action="/users/<%= userId %>">
   <div>
-    <input type="text" name="user[zipcode]" placeholder="zipcode">
+  <input type="text" name="user[zipcode]" placeholder="zipcode">
   </div>
-  
+  <br>
   <button>Save </button>
 </form>
 
+
+<div class="chooseImage">
 <form method="post" action="/fileupload" id='uploadForm' enctype='multipart/form-data'>
-  <div>
-    <input type="file" name="userPhoto" />
+<br>  
+
+<div>
+    <input type="file" name="userPhoto" /><br>
     <input type="submit" name="submit" value="upload image" />
-  </div>
+</div>
+
+</div>
+</div>
 </form>
-
-
+</div>
+</div>
 </body>
 </html>
 

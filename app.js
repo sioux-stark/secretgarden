@@ -70,7 +70,7 @@ app.get("/sign_up", function (req, res) {
 // WHEN SOMEONE  SUBMITS A SIGNUP PAGE
 app.post("/users", function (req, res) {
   var newUser = req.body.user;
-  console.log("New User:", newUser);
+  //console.log("New User:", newUser);
   // CREATE a user and secure their password
   db.user.createSecure(newUser.email, newUser.password, 
     function () {
@@ -100,17 +100,7 @@ app.get('/about', function (req,res) {
 
 
 
-//gardens in the area
-// app.get('/gardens', function (req,res){
-//   //anytime i want catch something from database use params
-//   db.gardens.findAll({
-//     where: {zipcode:req.params.zipcode},
-//     attributes: url,
-//     include: [{model: user, attributes: userId}]
-//   .then(function(gardens){
-//   res.render('site/gardens.ejs'), {user: req.user, gardens:url}
-//   })
-// });
+
 
 //gardens in the area
 app.get("/gardens", function (req, res) {
@@ -153,6 +143,7 @@ app.get('/users/:id', function (req, res) {
 //save zipcode to database
 app.post("/users/:id", function (req, res){
   var addZip = req.body.user.zipcode;
+
   console.log("ADDZIP", addZip)
    db.user.find(req.params.id).success(function(user){
     user.updateAttributes({zipcode: addZip}).then(function(user){
@@ -162,17 +153,7 @@ app.post("/users/:id", function (req, res){
   });
 }); 
 
-// //adding description
-// app.post("/users/:id", function (req,res){
-//   var addDescription = req.body.garden.description;
-//   console.log("addDescription", addDescription)
-//   db.user.find(req.params.id).success(function(garden){
-//     user.updateAttributes({description: addDescription}).then(function(user){
-//       console.log(description)
-//       res.redirect('/users/' + user.id);
-//     })
-//   });
-// }); 
+
 
 
 // When someone wants the login page
@@ -191,21 +172,6 @@ app.post('/login', passport.authenticate('local', {
   failureRedirect: '/login'
 }));
 
-
-// app.post('users/:id', function (req, res) {
-//   var userId = req.params.id;
-//   var zipcode = req.body.user['zipcode'];
-//   // add a zipcode to their row in the usertable
-//   db.user
-//     .find(userId)
-//     .success( function (foundUser) {
-//       user.save().success(function(){zipcode});
-//       res.render('site/index'); 
-//     })
-//     .catch ( function (err) {
-//       console.log(err);
-//     });
-// });
 
 
 /// TESTING FILE UPLOAD
@@ -236,21 +202,6 @@ app.use(function(req, res, next) {
       done = true;
     }
 }));
-// app.use(
-//   multer({ dest: __dirname + '/public/photos/',
-//     rename: function(fieldname, filename) {
-//       return filename + Date.now();
-//     },
-//     onFileUploadStart: function (file) {
-//       console.log(file.originalname + ' ATTEMPTED');
-//       console.log("CHECKING FOR CURRENT USER");
-//       console.log(file)
-//     },
-//     onFileUploadComplete: function (file) {
-//       console.log(file.fieldname + ' uploaded to ' + file.path);
-//       done = true;
-//     }
-// }));
 
 app.post('/fileupload', function(req, res){
     console.log(req.files);
@@ -262,17 +213,10 @@ app.post('/fileupload', function(req, res){
     });
 });
 
-
-
- 
-
- 
-
-
-// app.listen(3000, function () {
-//   console.log("LISTENING");
-// })
-
+app.get("/logout", function(req, res) {
+  req.logout();
+  res.redirect("/")
+})
 app.listen(process.env.PORT || 3000, function() {
   console.log("LISTENING");
 });
